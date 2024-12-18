@@ -1,122 +1,85 @@
-# Projeto ETL - Extração de Dados via API
 
-## 📝 Descrição
-Este projeto implementa um processo ETL (Extract, Transform, Load) para extrair dados de APIs, realizar transformações necessárias e carregar em um destino específico.
+# Exemplo de Uso da API OpenAI
 
-## 🚀 Funcionalidades
-- Extração automatizada de dados via API
-- Transformação e limpeza dos dados
-- Carregamento dos dados processados
-- Logs de execução
-- Tratamento de erros
+Este é um script Python simples que demonstra como interagir com a API de Chat Completion da OpenAI.
 
-## 🛠️ Tecnologias Utilizadas
-- Python 3.x
-- Pandas
-- Requests
-- Python-dotenv
-- Logging
-- JSON
+## Pré-requisitos
 
-## 📋 Pré-requisitos
-- Python 3.x instalado
-- Pip (gerenciador de pacotes Python)
-- Credenciais de acesso à API (se necessário)
+Antes de executar este exemplo, certifique-se de ter:
 
-## ⚙️ Instalação
-1. Clone o repositório
-```git
-git clone https://github.com/seu-usuario/nome-do-projeto.git
+1. Python instalado no seu sistema
+2. Uma chave de API da OpenAI
+3. Pacotes Python necessários instalados
+
+## Instalação
+
+1. Clone este repositório ou baixe o arquivo de exemplo
+2. Instale os pacotes necessários usando o arquivo requirements.txt:
+
+### Como usar o requirements.txt
+
+Crie um arquivo `requirements.txt` com o seguinte conteúdo:
+```txt
+requests==2.31.0
+python-dotenv==1.0.0
 ```
 
-2. Instale as dependências
+Para instalar as dependências, execute:
 ```bash
 pip install -r requirements.txt
 ```
 
-## 🔧 Configuração
-1. Crie um arquivo `.env` na raiz do projeto
-2. Adicione suas variáveis de ambiente:
-```env
-API_KEY=sua_chave_api
-API_URL=url_da_api
+3. Crie um arquivo `.env` no mesmo diretório do seu script e adicione sua chave da API OpenAI:
+```
+OPENAI_API_KEY=sua_chave_api_aqui
 ```
 
-## 📦 Estrutura do Projeto
-```
-projeto/
-│
-├── src/
-│   ├── extract.py
-│   ├── transform.py
-│   ├── load.py
-│   └── utils.py
-│
-├── data/
-│   ├── raw/
-│   └── processed/
-│
-├── logs/
-├── tests/
-├── .env
-├── requirements.txt
-└── README.md
-```
+## Como Usar
 
-## 🚀 Como usar
-1. Configure as variáveis de ambiente no arquivo `.env`
-2. Execute o script principal:
+1. Certifique-se de que seu arquivo `.env` está configurado corretamente com sua chave da API OpenAI
+2. Execute o script:
 ```bash
-python src/main.py
+python exemplo_04.py
 ```
 
-## 📊 Exemplo de Uso
-```python
-from src.extract import extract_data
-from src.transform import transform_data
-from src.load import load_data
+O script enviará uma pergunta simples ("Qual é a capital da França?") para a API da OpenAI e imprimirá a resposta.
 
-# Extrair dados
-raw_data = extract_data()
+## Como Funciona
 
-# Transformar dados
-transformed_data = transform_data(raw_data)
+O script:
+1. Carrega variáveis de ambiente do arquivo `.env`
+2. Configura os headers necessários com sua chave de API
+3. Prepara os dados da requisição com o modelo e a mensagem
+4. Envia uma requisição POST para a API da OpenAI
+5. Imprime a resposta da IA
 
-# Carregar dados
-load_data(transformed_data)
+## Exemplo de Resposta
+
+Quando você executar o script, deverá receber uma resposta similar a:
+```
+Paris
 ```
 
-## 📝 Logs
-Os logs são armazenados no diretório `logs/` e incluem:
-- Informações sobre o processo ETL
-- Erros e exceções
-- Métricas de execução
+## Observações Importantes
 
-## 🤝 Contribuindo
-1. Faça um Fork do projeto
-2. Crie uma Branch para sua Feature (`git checkout -b feature/AmazingFeature`)
-3. Commit suas mudanças (`git commit -m 'Add some AmazingFeature'`)
-4. Push para a Branch (`git push origin feature/AmazingFeature`)
-5. Abra um Pull Request
+- Mantenha sua chave de API segura e nunca a envie para o controle de versão
+- O script usa o modelo GPT-3.5-turbo
+- Certifique-se de ter créditos suficientes em sua conta OpenAI
 
-## 📄 Licença
-Este projeto está sob a licença MIT - veja o arquivo [LICENSE.md](LICENSE.md) para detalhes
+## Sobre o Requirements.txt
 
-## ✒️ Autores
-* **Seu Nome** - *Trabalho Inicial* - [seu-usuario](https://github.com/seu-usuario)
+O arquivo `requirements.txt` é uma prática comum em projetos Python para gerenciar dependências:
 
-## 📞 Suporte
-Para suporte, envie um email para seu-email@exemplo.com ou abra uma issue no repositório.
+- Lista todas as bibliotecas necessárias e suas versões
+- Facilita a instalação em diferentes ambientes
+- Garante que todos usem as mesmas versões das bibliotecas
+- Pode ser gerado usando o comando: `pip freeze > requirements.txt`
+- Pode ser instalado usando: `pip install -r requirements.txt`
+
+## Dependências
+
+- requests: Para fazer requisições HTTP
+- python-dotenv: Para carregar variáveis de ambiente
+- json (built-in): Para manipulação de dados JSON
+- os (built-in): Para interação com o sistema operacional
 ```
-
-As principais alterações incluem:
-1. Adição de mais tecnologias utilizadas
-2. Estrutura detalhada do projeto
-3. Instruções de configuração com arquivo .env
-4. Exemplo de uso com código
-5. Seção de logs
-6. Instruções para contribuição
-7. Informações sobre licença e autores
-8. Seção de suporte
-
-
