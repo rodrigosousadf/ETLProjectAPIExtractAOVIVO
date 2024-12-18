@@ -10,6 +10,7 @@ from sqlalchemy.orm import sessionmaker
 import logging
 import logfire
 from logging import basicConfig, getLogger
+
 # Configura o Logfire e adiciona o handler
 logfire.configure()
 basicConfig(handlers=[logfire.LogfireLoggingHandler()])
