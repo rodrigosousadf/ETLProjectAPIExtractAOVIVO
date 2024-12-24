@@ -31,7 +31,11 @@ POSTGRES_HOST = os.getenv("POSTGRES_HOST")
 POSTGRES_PORT = os.getenv("POSTGRES_PORT")
 POSTGRES_DB = os.getenv("POSTGRES_DB")
 
-# Monta a URL de conexão ao banco PostgreSQL (sem ?sslmode=...)
+# Constantes de configuração
+SLEEP_TIME = 15  # segundos
+API_URL = 'https://api.coinbase.com/v2/prices/spot'
+
+# Configuração do banco de dados
 DATABASE_URL = (
     f"postgresql://{POSTGRES_USER}:{POSTGRES_PASSWORD}"
     f"@{POSTGRES_HOST}:{POSTGRES_PORT}/{POSTGRES_DB}"
@@ -49,58 +53,69 @@ def criar_tabela():
 
 def extrair_dados_bitcoin():
     """Extrai o JSON completo da API da Coinbase."""
-    url = 'https://api.coinbase.com/v2/prices/spot'
-    resposta = requests.get(url)
-    if resposta.status_code == 200:
+    try:
+        resposta = requests.get(API_URL, timeout=10)  # Adiciona timeout
+        resposta.raise_for_status()  # Levanta exceção para status codes ruins
         return resposta.json()
-    else:
-        logger.error(f"Erro na API: {resposta.status_code}")
+    except requests.RequestException as e:
+        logger.error(f"Erro na requisição à API: {e}")
         return None
 
 def tratar_dados_bitcoin(dados_json):
     """Transforma os dados brutos da API e adiciona timestamp."""
-    valor = float(dados_json['data']['amount'])
-    criptomoeda = dados_json['data']['base']
-    moeda = dados_json['data']['currency']
-    timestamp = datetime.now()
-    
-    dados_tratados = {
-        "valor": valor,
-        "criptomoeda": criptomoeda,
-        "moeda": moeda,
-        "timestamp": timestamp
-    }
-    return dados_tratados
+    try:
+        valor = float(dados_json['data']['amount'])
+        criptomoeda = dados_json['data']['base']
+        moeda = dados_json['data']['currency']
+        timestamp = datetime.now()
+        
+        return {
+            "valor": valor,
+            "criptomoeda": criptomoeda,
+            "moeda": moeda,
+            "timestamp": timestamp
+        }
+    except (KeyError, ValueError) as e:
+        logger.error(f"Erro ao tratar dados: {e}")
+        return None
 
 def salvar_dados_postgres(dados):
     """Salva os dados no banco PostgreSQL."""
+    if not dados:
+        logger.error("Dados inválidos para salvamento")
+        return False
+        
     session = Session()
     try:
         novo_registro = BitcoinPreco(**dados)
         session.add(novo_registro)
         session.commit()
         logger.info(f"[{dados['timestamp']}] Dados salvos no PostgreSQL!")
+        return True
     except Exception as ex:
         logger.error(f"Erro ao inserir dados no PostgreSQL: {ex}")
         session.rollback()
+        return False
     finally:
         session.close()
 
 if __name__ == "__main__":
     criar_tabela()
-    logger.info("Iniciando ETL com atualização a cada 15 segundos... (CTRL+C para interromper)")
+    logger.info(f"Iniciando ETL com atualização a cada {SLEEP_TIME} segundos... (CTRL+C para interromper)")
 
     while True:
         try:
             dados_json = extrair_dados_bitcoin()
             if dados_json:
                 dados_tratados = tratar_dados_bitcoin(dados_json)
-                logger.info(f"Dados Tratados: {dados_tratados}")
-                salvar_dados_postgres(dados_tratados)
-            time.sleep(15)
+                if dados_tratados:
+                    sucesso = salvar_dados_postgres(dados_tratados)
+                    if not sucesso:
+                        logger.warning("Falha ao salvar dados")
+            time.sleep(SLEEP_TIME)
         except KeyboardInterrupt:
             logger.info("Processo interrompido pelo usuário. Finalizando...")
             break
         except Exception as e:
-            logger.error(f"Erro durante a execução: {e}")
-            time.sleep(15)
+            logger.error(f"Erro não tratado durante a execução: {e}")
+            time.sleep(SLEEP_TIME)
