@@ -37,14 +37,8 @@ def ler_dados_postgres():
 def main():
     st.set_page_config(page_title="Dashboard de Preços do Bitcoin", layout="wide")
     st.title("📊 Dashboard de Preços do Bitcoin")
-    
-    # Add auto-refresh functionality
-    auto_refresh = st.sidebar.checkbox('Auto-refresh dados', value=True)
-    if auto_refresh:
-        time.sleep(5)  # Refresh every 5 seconds
-        st.experimental_rerun()
-    
-    # Remove the port configuration from here as it's not needed in main()
+    st.write("Este dashboard exibe os dados do preço do Bitcoin coletados periodicamente em um banco PostgreSQL.")
+
     df = ler_dados_postgres()
 
     if not df.empty:
@@ -66,11 +60,6 @@ def main():
         st.warning("Nenhum dado encontrado no banco de dados PostgreSQL.")
 
 if __name__ == "__main__":
-    # Get port from environment variable
-    port = int(os.getenv('PORT', 8501))
-    
-    # Configure Streamlit to use the specified port
-    import sys
-    sys.argv = ["streamlit", "run", __file__, "--server.port", str(port)]
-    
+    port = os.getenv('PORT')
+    print(f"Porta fornecida pelo Render: {port}")
     main()
