@@ -1,85 +1,122 @@
+# Sistema de Monitoramento do Bitcoin
 
-# Exemplo de Uso da API OpenAI
+Um sistema completo que coleta dados do preço do Bitcoin via API Coinbase, armazena em PostgreSQL e disponibiliza visualização através de um dashboard Streamlit.
 
-Este é um script Python simples que demonstra como interagir com a API de Chat Completion da OpenAI.
+## 🚀 Funcionalidades
 
-## Pré-requisitos
+### Pipeline ETL
+- Coleta automática do preço do Bitcoin via API Coinbase
+- Armazenamento em PostgreSQL
+- Monitoramento com Logfire
+- Endpoint de health check
 
-Antes de executar este exemplo, certifique-se de ter:
+### Dashboard
+- Visualização em tempo real dos preços
+- Gráfico de evolução temporal
+- Estatísticas gerais (preço atual, máximo e mínimo)
+- Tabela com dados históricos
 
-1. Python instalado no seu sistema
-2. Uma chave de API da OpenAI
-3. Pacotes Python necessários instalados
+## 📋 Pré-requisitos
 
-## Instalação
+- Python 3.x
+- PostgreSQL
+- Conta Logfire
+- Variáveis de ambiente configuradas
 
-1. Clone este repositório ou baixe o arquivo de exemplo
-2. Instale os pacotes necessários usando o arquivo requirements.txt:
+## 🔧 Instalação
 
-### Como usar o requirements.txt
+1. Clone o repositório e instale as dependências:
 
-Crie um arquivo `requirements.txt` com o seguinte conteúdo:
-```txt
-requests==2.31.0
-python-dotenv==1.0.0
-```
+    pip install -r requirements.txt
 
-Para instalar as dependências, execute:
-```bash
-pip install -r requirements.txt
-```
+2. Configure as variáveis de ambiente no arquivo `.env`:
 
-3. Crie um arquivo `.env` no mesmo diretório do seu script e adicione sua chave da API OpenAI:
-```
-OPENAI_API_KEY=sua_chave_api_aqui
-```
+    POSTGRES_USER=seu_usuario
+    POSTGRES_PASSWORD=sua_senha
+    POSTGRES_HOST=seu_host
+    POSTGRES_PORT=5432
+    POSTGRES_DB=nome_do_banco
+    PORT=10000
 
-## Como Usar
+## 💻 Como Usar
 
-1. Certifique-se de que seu arquivo `.env` está configurado corretamente com sua chave da API OpenAI
-2. Execute o script:
-```bash
-python exemplo_04.py
-```
+### Executando o Pipeline ETL:
 
-O script enviará uma pergunta simples ("Qual é a capital da França?") para a API da OpenAI e imprimirá a resposta.
+    python src/pipeline_04.py
 
-## Como Funciona
+### Iniciando o Dashboard:
 
-O script:
-1. Carrega variáveis de ambiente do arquivo `.env`
-2. Configura os headers necessários com sua chave de API
-3. Prepara os dados da requisição com o modelo e a mensagem
-4. Envia uma requisição POST para a API da OpenAI
-5. Imprime a resposta da IA
+    streamlit run app/dashboard_01.py
 
-## Exemplo de Resposta
+## 📦 Estrutura do Projeto
 
-Quando você executar o script, deverá receber uma resposta similar a:
-```
-Paris
-```
+    .
+    ├── src/
+    │   ├── pipeline_04.py    # Pipeline ETL
+    │   └── database.py       # Modelos do SQLAlchemy
+    ├── app/
+    │   └── dashboard_01.py   # Dashboard Streamlit
+    └── .env                  # Configurações (não versionado)
 
-## Observações Importantes
+## 📚 Dependências Principais
 
-- Mantenha sua chave de API segura e nunca a envie para o controle de versão
-- O script usa o modelo GPT-3.5-turbo
-- Certifique-se de ter créditos suficientes em sua conta OpenAI
+### Pipeline
+- requests
+- SQLAlchemy
+- python-dotenv
+- Flask
+- logfire
 
-## Sobre o Requirements.txt
+### Dashboard
+- streamlit
+- pandas
+- psycopg2
+- python-dotenv
 
-O arquivo `requirements.txt` é uma prática comum em projetos Python para gerenciar dependências:
+## 🖥️ Dashboard
 
-- Lista todas as bibliotecas necessárias e suas versões
-- Facilita a instalação em diferentes ambientes
-- Garante que todos usem as mesmas versões das bibliotecas
-- Pode ser gerado usando o comando: `pip freeze > requirements.txt`
-- Pode ser instalado usando: `pip install -r requirements.txt`
+O dashboard apresenta:
+- Tabela com dados recentes
+- Gráfico de linha mostrando a evolução do preço
+- Métricas em tempo real:
+  - Preço atual do Bitcoin
+  - Preço máximo histórico
+  - Preço mínimo histórico
 
-## Dependências
+## ⚙️ Configurações
 
-- requests: Para fazer requisições HTTP
-- python-dotenv: Para carregar variáveis de ambiente
-- json (built-in): Para manipulação de dados JSON
-- os (built-in): Para interação com o sistema operacional
-```
+### Pipeline
+- `SLEEP_TIME`: 15 segundos (intervalo entre coletas)
+- `API_URL`: https://api.coinbase.com/v2/prices/spot
+- `PORT`: 10000 (padrão)
+
+### Dashboard
+- Atualização automática dos dados
+- Interface responsiva
+- Visualização em tela cheia
+
+## 🔒 Segurança
+
+- Credenciais sensíveis gerenciadas via variáveis de ambiente
+- Timeout configurado para requisições
+- Tratamento de erros em ambos os componentes
+
+## 🐛 Monitoramento
+
+- Logging via Logfire no pipeline
+- Mensagens de erro no dashboard
+- Health check endpoint no pipeline
+
+## 📊 Dados Coletados
+
+- Valor do Bitcoin
+- Criptomoeda (BTC)
+- Moeda de cotação
+- Timestamp da coleta
+
+---
+
+Para mais informações sobre as APIs e ferramentas utilizadas:
+- [Coinbase API](https://docs.cloud.coinbase.com/sign-in-with-coinbase/docs/api-prices)
+- [Streamlit Documentation](https://docs.streamlit.io/)
+- [Logfire Documentation](https://docs.logfire.sh/)
