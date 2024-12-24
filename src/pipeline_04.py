@@ -17,7 +17,6 @@ basicConfig(handlers=[logfire.LogfireLoggingHandler()])
 logger = getLogger(__name__)
 logger.setLevel(logging.INFO)
 
-
 # Importar Base e BitcoinPreco do database.py
 from database import Base, BitcoinPreco
 
@@ -30,6 +29,7 @@ POSTGRES_PASSWORD = os.getenv("POSTGRES_PASSWORD")
 POSTGRES_HOST = os.getenv("POSTGRES_HOST")
 POSTGRES_PORT = os.getenv("POSTGRES_PORT")
 POSTGRES_DB = os.getenv("POSTGRES_DB")
+PORT = int(os.getenv('PORT', 10000))  # Nova configuração de porta para o Render
 
 # Constantes de configuração
 SLEEP_TIME = 15  # segundos
@@ -44,7 +44,6 @@ DATABASE_URL = (
 # Cria o engine e a sessão
 engine = create_engine(DATABASE_URL)
 Session = sessionmaker(bind=engine)
-
 
 def criar_tabela():
     """Cria a tabela no banco de dados, se não existir."""
@@ -99,9 +98,27 @@ def salvar_dados_postgres(dados):
     finally:
         session.close()
 
+# Adiciona uma função simples para indicar que o serviço está rodando
+def health_check():
+    """Retorna uma mensagem indicando que o serviço está rodando."""
+    return "ETL Service is running"
+
 if __name__ == "__main__":
+    logger.info(f"Iniciando servidor na porta {PORT}")
     criar_tabela()
     logger.info(f"Iniciando ETL com atualização a cada {SLEEP_TIME} segundos... (CTRL+C para interromper)")
+
+    # Opcional: Adicionar um servidor web simples para responder a health checks
+    from flask import Flask
+    app = Flask(__name__)
+
+    @app.route('/health')
+    def health():
+        return health_check()
+
+    # Inicia o servidor Flask em uma thread separada
+    from threading import Thread
+    Thread(target=lambda: app.run(host='0.0.0.0', port=PORT, debug=False, use_reloader=False)).start()
 
     while True:
         try:
