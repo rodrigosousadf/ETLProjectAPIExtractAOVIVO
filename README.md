@@ -1,4 +1,4 @@
-<img width="1646" alt="captura pipeline de dados" src="https://github.com/user-attachments/assets/876268f3-4ad4-4901-8237-6a8b6490d963" /># Sistema de Monitoramento do Bitcoin
+# Sistema de Monitoramento do Bitcoin
 
 Um sistema completo que coleta dados do preço do Bitcoin via API Coinbase, armazena em PostgreSQL e disponibiliza visualização através de um dashboard Streamlit.
 
