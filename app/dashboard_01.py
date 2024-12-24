@@ -5,7 +5,6 @@ import time
 import os
 from datetime import datetime
 from dotenv import load_dotenv
-from sqlalchemy import create_engine
 
 # Carrega variáveis de ambiente do arquivo .env
 load_dotenv()
@@ -20,12 +19,16 @@ POSTGRES_DB = os.getenv("POSTGRES_DB")
 def ler_dados_postgres():
     """Lê os dados do banco PostgreSQL e retorna como DataFrame."""
     try:
-        # Create SQLAlchemy engine
-        engine = create_engine(f'postgresql://{POSTGRES_USER}:{POSTGRES_PASSWORD}@{POSTGRES_HOST}:{POSTGRES_PORT}/{POSTGRES_DB}')
-        
+        conn = psycopg2.connect(
+            host=POSTGRES_HOST,
+            database=POSTGRES_DB,
+            user=POSTGRES_USER,
+            password=POSTGRES_PASSWORD,
+            port=POSTGRES_PORT
+        )
         query = "SELECT * FROM bitcoin_precos ORDER BY timestamp DESC"
-        df = pd.read_sql(query, engine)
-        engine.dispose()
+        df = pd.read_sql(query, conn)
+        conn.close()
         return df
     except Exception as e:
         st.error(f"Erro ao conectar no PostgreSQL: {e}")
@@ -34,8 +37,16 @@ def ler_dados_postgres():
 def main():
     st.set_page_config(page_title="Dashboard de Preços do Bitcoin", layout="wide")
     st.title("📊 Dashboard de Preços do Bitcoin")
-    st.write("Este dashboard exibe os dados do preço do Bitcoin coletados periodicamente em um banco PostgreSQL.")
-
+    
+    # Add auto-refresh functionality
+    auto_refresh = st.sidebar.checkbox('Auto-refresh dados', value=True)
+    if auto_refresh:
+        time.sleep(5)  # Refresh every 5 seconds
+        st.experimental_rerun()
+    
+    # Get port from environment variable or use default
+    port = int(os.getenv('PORT', 8501))
+    
     df = ler_dados_postgres()
 
     if not df.empty:
@@ -57,4 +68,7 @@ def main():
         st.warning("Nenhum dado encontrado no banco de dados PostgreSQL.")
 
 if __name__ == "__main__":
+    # Configure server port
+    import streamlit.web.server as server
+    server.Server.address = f":{port}"
     main()
