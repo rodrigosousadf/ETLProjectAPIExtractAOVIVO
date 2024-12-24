@@ -44,9 +44,7 @@ def main():
         time.sleep(5)  # Refresh every 5 seconds
         st.experimental_rerun()
     
-    # Get port from environment variable or use default
-    port = int(os.getenv('PORT', 8501))
-    
+    # Remove the port configuration from here as it's not needed in main()
     df = ler_dados_postgres()
 
     if not df.empty:
@@ -68,7 +66,11 @@ def main():
         st.warning("Nenhum dado encontrado no banco de dados PostgreSQL.")
 
 if __name__ == "__main__":
-    # Configure server port
-    import streamlit.web.server as server
-    server.Server.address = f":{port}"
+    # Get port from environment variable
+    port = int(os.getenv('PORT', 8501))
+    
+    # Configure Streamlit to use the specified port
+    import sys
+    sys.argv = ["streamlit", "run", __file__, "--server.port", str(port)]
+    
     main()
