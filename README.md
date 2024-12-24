@@ -1,4 +1,4 @@
-# Sistema de Monitoramento do Bitcoin
+<img width="1646" alt="captura pipeline de dados" src="https://github.com/user-attachments/assets/876268f3-4ad4-4901-8237-6a8b6490d963" /># Sistema de Monitoramento do Bitcoin
 
 Um sistema completo que coleta dados do preço do Bitcoin via API Coinbase, armazena em PostgreSQL e disponibiliza visualização através de um dashboard Streamlit.
 
@@ -114,9 +114,23 @@ O dashboard apresenta:
 - Moeda de cotação
 - Timestamp da coleta
 
+
 ---
 
 Para mais informações sobre as APIs e ferramentas utilizadas:
 - [Coinbase API](https://docs.cloud.coinbase.com/sign-in-with-coinbase/docs/api-prices)
 - [Streamlit Documentation](https://docs.streamlit.io/)
 - [Logfire Documentation](https://docs.logfire.sh/)
+
+Pipeline de dados funcionando 
+<img width="1646" alt="captura pipeline de dados" src="https://github.com/user-attachments/assets/dad27207-2ee1-407a-858d-c4c242b91eca" />
+
+Webservice do dashboard funcionando 
+<img width="1584" alt="captura do webservice do dashboard" src="https://github.com/user-attachments/assets/5a406385-6479-49da-8748-98c1045f409c" />
+
+Dashboard no streamlit funcionando
+<img width="1714" alt="captura dashboard streamlit" src="https://github.com/user-attachments/assets/462788a2-05be-4235-b2c4-5a1ffd6d06b7" />
+
+
+
+
